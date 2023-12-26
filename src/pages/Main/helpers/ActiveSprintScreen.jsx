@@ -627,7 +627,8 @@ function ProfileToggle({ isSelected, user, setSelectedDevList }) {
   }, [selected]);
   return (
     <ProfileAvatar onClick={() => setSelected(!selected)} isSelected={selected}>
-      {user.fullName.substr(0, 1)} {user.fullName.split(" ")[1]?.substr(0, 1)}
+      {user?.fullName?.substr(0, 1) ?? ""}{" "}
+      {user?.fullName?.split(" ")[1]?.substr(0, 1) ?? ""}
     </ProfileAvatar>
   );
 }

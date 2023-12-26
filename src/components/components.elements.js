@@ -28,10 +28,11 @@ export const NavLinks = styled.ul`
   & > li {
     margin: 0 8px;
     color: #000;
-    font-weight: 600;
-
+    font-weight: 400;
+    transition: 0.5s;
     &:hover {
       cursor: pointer;
+      font-weight: 500;
       color: #6dddc1;
     }
   }
