@@ -5,13 +5,15 @@ export const NavContainer = styled.div`
   border-bottom: 2px solid #ddd;
   background-color: #fff;
   /* box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.4); */
+
+  padding: 0 2rem;
 `;
 
 export const NavWrapper = styled(GridContainer)`
   grid-template-columns: 1fr 4fr 2fr auto;
   width: 100%;
   height: 60px;
-  max-width: 1140px;
+  /* max-width: 1140px; */
   margin: auto;
 `;
 

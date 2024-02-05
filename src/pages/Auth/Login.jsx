@@ -18,49 +18,53 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "../../api/auth/authSlice";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
+import { jwtDecode } from "jwt-decode";
+
 import logo from "../../assets/atom.png";
 
 import axios from "axios";
 import { LoginContainer, AuthNav } from "./Auth.elements";
 import { BASE_URL } from "../../utils/constants";
-const LOGIN_URL = BASE_URL + "/auth";
+const LOGIN_URL = BASE_URL + "/auth/login";
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
+  const [email, setUser] = useState("");
+  const [password, setPwd] = useState("");
   const [error, setError] = useState("");
 
-  const { setAuth, persist, setPersist } = useAuth();
+  const { setAuth, persist, setPersist, auth } = useAuth();
 
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
         LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({ email, password }),
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
 
-      const accessToken = response?.data?.accessToken;
-      const userId = response?.data?.userId;
+      const accessToken = response?.data?.access_token;
+      const user = jwtDecode(accessToken);
+      console.log(user.UserInfo.email);
+      const userId = user.UserInfo.userId;
+      const token_email = user.UserInfo.email;
+      const role = user.UserInfo.roles;
 
-      const roles = Object.values(response?.data?.roles);
-      console.log(response);
       if (response.status === 200) {
-        if (response?.data.roles?.includes(2000)) {
+        if (role === "MANAGER") {
           navigate("/home");
         } else {
           navigate("/dev");
         }
       }
-      setAuth({ user, pwd, roles, accessToken, userId });
-      dispatch(setCredentials({ ...response.data }));
+      setAuth({ user: token_email, role, accessToken, userId });
+      dispatch(setCredentials({ user: { email, role, accessToken, userId } }));
       setUser("");
       setPwd("");
     } catch (err) {
@@ -95,15 +99,15 @@ function Login() {
       <Heading>Login</Heading>
       <GridContainer gap="0.8rem">
         <TextField
-          label="UserName"
-          value={user}
+          label="Email"
+          value={email}
           onChange={(e) => setUser(e.target.value)}
           onKeyDown={handleKeypress}
         />
         <TextField
           label="Password"
           type="password"
-          value={pwd}
+          value={password}
           onChange={(e) => setPwd(e.target.value)}
           onKeyDown={handleKeypress}
         />
@@ -112,7 +116,7 @@ function Login() {
         <LinkText to="/register">Not Registered?</LinkText>
 
         <FormControlLabel
-          control={<Checkbox value={persist} onChange={togglePersist} />}
+          control={<Checkbox checked={persist} onChange={togglePersist} />}
           label="Remember Me"
         />
 

@@ -15,37 +15,37 @@ import logo from "../../assets/atom.png";
 function Register() {
   const [fullName, setFullName] = useState();
   const [error, setError] = useState();
-  const [userName, setUserName] = useState();
-  const [pwd, setPwd] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPwd] = useState();
   const [cpwd, setCPwd] = useState("");
 
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (pwd !== cpwd) {
+    if (password !== cpwd) {
       setError("Paswords do not match. ");
       return;
     }
     try {
-      const registerUser = await axios.post("/register", {
-        user: userName,
-        pwd: pwd,
-        fullName: fullName,
+      const registerUser = await axios.post("auth/register", {
+        email: email,
+        password: password,
         roles: { Candidate: 2001 },
       });
 
-      if (registerUser.status == 201) {
+      if (registerUser?.status == 201) {
         console.log("Registered");
         navigate("/");
       }
     } catch (err) {
-      if (err.response.status === 409) {
+      console.log("error", err);
+      if (err.response?.status === 409) {
         setError("Username is already taken");
         return;
-      } else if (err.response.status === 401) {
+      } else if (err.response?.status === 401) {
         setError("Incorrect Credentials");
         return;
-      } else if (err.response.status === 400) {
+      } else if (err.response?.status === 400) {
         setError("Please enter the required credentials");
         return;
       } else {
@@ -64,25 +64,25 @@ function Register() {
   };
   useEffect(() => {
     setError("");
-  }, [userName, fullName, pwd]);
+  }, [email, fullName, password]);
   return (
     <LoginContainer>
       <Heading>Register</Heading>
       <GridContainer columns="1fr" gap="0.7rem">
-        <TextField
+        {/* <TextField
           label="Full Name"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-        ></TextField>
+        ></TextField> */}
         <TextField
-          label="Username"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         ></TextField>
         <TextField
           label="Password"
           type="password"
-          value={pwd}
+          value={password}
           onChange={(e) => setPwd(e.target.value)}
         ></TextField>
         <TextField

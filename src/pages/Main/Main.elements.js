@@ -26,12 +26,13 @@ export const KanbanContainer = styled.div`
 `;
 
 export const KanbanColumn = styled(Container)`
-  min-width: 300px;
-  height: 450px;
+  /* height: 450px; */
+  max-height: 75vh;
   justify-content: flex-start;
   align-items: flex-start;
-  overflow: auto;
-  padding: 1rem 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
   border-radius: 4px;
 `;
 
@@ -153,7 +154,7 @@ export const ProfileAvatar = styled.div`
   text-transform: uppercase;
   font-weight: 500;
   border-radius: 50%;
-  box-shadow: -7px 0px 10px 0px rgba(0,0,0,0.1);
+  box-shadow: -7px 0px 10px 0px rgba(0, 0, 0, 0.1);
   border: ${(props) => (props.isSelected ? "3px solid #6B7EBF" : "none")};
   transition: all 0.2s ease-in-out;
 

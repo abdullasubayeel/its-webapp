@@ -84,7 +84,11 @@ function Dashboard() {
   const data = useSelector((state) => state.project);
 
   return (
-    <GridContainer style={{ background: "#fff" }} columns="250px 1fr">
+    <GridContainer
+      align="flex-start"
+      style={{ background: "#fff" }}
+      columns="250px 1fr"
+    >
       <MenuBar place="flex-start">
         <BackNavigator
           columns="auto auto"

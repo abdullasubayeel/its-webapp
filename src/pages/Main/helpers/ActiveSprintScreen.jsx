@@ -50,7 +50,7 @@ import {
 import ReactModal from "react-modal";
 import { customStyle } from "../../../utils/modalStyles";
 import { useGetDeveloperQuery } from "../../../api/endpoints/managerEndpoint";
-function ActiveSprintScreen({ employees }) {
+function ActiveSprintScreen() {
   const { id } = useParams();
 
   const data = useSelector((state) => state.project);
@@ -280,9 +280,9 @@ function ActiveSprintScreen({ employees }) {
   const [selectedDev, setSelectedDevList] = useState([]);
   const [devFilter, setDevFilter] = useState("");
   const [selectedEpic, setSelectedEpic] = useState("");
-  console.log(selectedDev);
+
   return (
-    <GridContainer align="flex-start">
+    <GridContainer align="flex-start" place="flex-start" margin="1rem 0">
       <GridContainer width="100%" columns="auto 1fr 1fr">
         <TextField
           sx={{ width: "100px" }}
@@ -541,7 +541,7 @@ function ActiveSprintScreen({ employees }) {
                                       display: "grid",
                                       width: "calc(100% - 16px - 2rem)",
                                       gridTemplateColumns: "1fr",
-                                      margin: "4px 8px",
+                                      margin: "8px",
                                       backgroundColor: snapshot.isDragging
                                         ? "#CBCBCB "
                                         : "#fff",

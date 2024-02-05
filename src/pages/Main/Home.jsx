@@ -69,7 +69,7 @@ const Home = memo(() => {
   //Update EMployee
 
   const [error, setError] = useState("");
-
+  console.log("Auth", auth);
   //RTK Query
   const [addProject, { isLoading: isAddProjectLoading }] =
     useAddProjectMutation();
@@ -463,7 +463,7 @@ const Home = memo(() => {
                           <td>{obj.projectsAssigned.length}</td>
                           <td>{obj.ticketsAssigned.length}</td>
                           <td>
-                            <CenterFlexContainer style={{gap:"8px"}}>
+                            <CenterFlexContainer style={{ gap: "8px" }}>
                               <Button
                                 style={{
                                   background: "#90c1d7",
