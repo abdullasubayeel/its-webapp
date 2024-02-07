@@ -5,10 +5,11 @@ import Dashboard from "./pages/Main/Dashboard";
 import PersistLogin from "./pages/Auth/PersistLogin";
 import Register from "./pages/Auth/Register";
 import Home from "./pages/Main/Home";
-import RequireAuth from "./pages/Auth/RequireAuth";
+import RequireAuth from "./utils/RequireAuth";
 import Unauthorized from "./pages/Auth/Unauthorized";
 import AuthLayout from "./pages/Auth/AuthLayout";
 import DevDashboard from "./pages/Dev/DevDashboard";
+import SetPassword from "./pages/Auth/SetPassword";
 
 const ROLES = {
   Developer: 2023,
@@ -26,6 +27,7 @@ function App() {
               <Route element={<Register />} path="/register"></Route>
             </Route>
             <Route element={<Unauthorized />} path="/unauthorized"></Route>
+            <Route element={<SetPassword />} path="/set-password"></Route>
             <Route element={<RequireAuth allowedRoles={[ROLES.Manager]} />}>
               <Route element={<Navbar />}>
                 <Route element={<Dashboard />} path="/project/:id"></Route>

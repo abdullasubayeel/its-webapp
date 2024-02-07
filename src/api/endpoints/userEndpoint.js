@@ -3,17 +3,19 @@ import { apiSlice } from "../apiSlice";
 const developerEndpoint = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAssignedProjects: builder.query({
-      query: () => `/developer/myprojects`,
+      query: () => `/projects`,
       providesTags: ["DevProjects"],
     }),
+
     addDeveloper: builder.mutation({
       query: (data) => ({
-        url: `/register/developer/`,
+        url: `/user/developer`,
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["Developer"],
     }),
+
     updateDeveloper: builder.mutation({
       query: (data) => ({
         url: `/developer/${data.id}`,
@@ -24,7 +26,7 @@ const developerEndpoint = apiSlice.injectEndpoints({
     }),
     deleteDeveloper: builder.mutation({
       query: (data) => ({
-        url: `/developer/${data.id}`,
+        url: `/user/${data.id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Developer"],

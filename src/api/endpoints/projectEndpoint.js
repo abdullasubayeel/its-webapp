@@ -3,16 +3,16 @@ import { apiSlice } from "../apiSlice";
 const projectEndPoints = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProjects: builder.query({
-      query: (data) => "/project",
+      query: ({ managerId }) => `/projects`,
       providesTags: ["Projects"],
     }),
     getSingleProject: builder.query({
-      query: (id) => `/project/singleproject?id=${id}`,
+      query: (id) => `/projects?id=${id}`,
       providesTags: ["Project"],
     }),
     addProject: builder.mutation({
       query: (data) => ({
-        url: `/project`,
+        url: `/projects`,
         method: "POST",
         body: data,
       }),
@@ -28,7 +28,7 @@ const projectEndPoints = apiSlice.injectEndpoints({
     }),
     deleteProject: builder.mutation({
       query: (data) => ({
-        url: `/project/${data.id}`,
+        url: `/project?id=${data.id}`,
         method: "DELETE",
         body: data,
       }),

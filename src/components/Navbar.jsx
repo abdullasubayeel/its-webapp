@@ -167,7 +167,7 @@ function Navbar() {
 
   async function handleLogout() {
     axios
-      .get(BASE_URL + "/logout")
+      .post(BASE_URL + "/auth/logout")
       .then((res) => {
         console.log(res.data);
       })

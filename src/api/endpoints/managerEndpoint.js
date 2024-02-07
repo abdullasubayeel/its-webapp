@@ -3,7 +3,7 @@ import { apiSlice } from "../apiSlice";
 const managerEndpoint = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getDeveloper: builder.query({
-      query: () => `/developer`,
+      query: ({ managerId }) => `/user?managerId=${managerId}`,
       providesTags: ["Developer"],
     }),
   }),

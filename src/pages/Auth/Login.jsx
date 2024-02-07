@@ -54,17 +54,17 @@ function Login() {
       console.log(user.UserInfo.email);
       const userId = user.UserInfo.userId;
       const token_email = user.UserInfo.email;
-      const role = user.UserInfo.roles;
+      const roles = user.UserInfo.roles;
 
       if (response.status === 200) {
-        if (role === "MANAGER") {
+        if (roles === "MANAGER") {
           navigate("/home");
         } else {
           navigate("/dev");
         }
       }
-      setAuth({ user: token_email, role, accessToken, userId });
-      dispatch(setCredentials({ user: { email, role, accessToken, userId } }));
+      setAuth({ email: token_email, roles, accessToken, userId });
+      dispatch(setCredentials({ ...response.data }));
       setUser("");
       setPwd("");
     } catch (err) {

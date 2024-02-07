@@ -36,7 +36,7 @@ import {
   useAddDeveloperMutation,
   useDeleteDeveloperMutation,
   useUpdateDeveloperMutation,
-} from "../../api/endpoints/developerEndpoint";
+} from "../../api/endpoints/userEndpoint";
 import useAuth from "../../hooks/useAuth";
 import { useGetDeveloperQuery } from "../../api/endpoints/managerEndpoint";
 import NoData from "../../components/NoData";
@@ -44,7 +44,7 @@ import { current } from "@reduxjs/toolkit";
 
 const Home = memo(() => {
   const navigate = useNavigate();
-  const auth = useAuth();
+  const { auth } = useAuth();
   //adding project states
   const [pTitle, setPTitle] = useState("");
   const [pDesc, setPDesc] = useState("");
@@ -55,7 +55,7 @@ const Home = memo(() => {
 
   //add Employee states
   const [devName, setDevName] = useState("");
-  const [devUsername, setDevUsername] = useState("");
+  const [devEmail, setDevEmail] = useState("");
   const [devPassword, setDevPassword] = useState("");
   const [devCPassword, setDevCPassword] = useState("");
 
@@ -69,7 +69,6 @@ const Home = memo(() => {
   //Update EMployee
 
   const [error, setError] = useState("");
-  console.log("Auth", auth);
   //RTK Query
   const [addProject, { isLoading: isAddProjectLoading }] =
     useAddProjectMutation();
@@ -86,12 +85,12 @@ const Home = memo(() => {
     data: projects,
     isLoading: isProjectLoading,
     isSuccess: isProjectSuccess,
-  } = useGetProjectsQuery();
+  } = useGetProjectsQuery({ managerId: auth.userId });
   const {
     data: myDevelopers,
     isLoading: isDevelopersLoading,
     isSuccess: isDevelopersSuccess,
-  } = useGetDeveloperQuery();
+  } = useGetDeveloperQuery({ managerId: auth.userId });
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -153,31 +152,27 @@ const Home = memo(() => {
     setAddingProject(false);
   }
   async function handleAddDeveloper() {
-    if (devPassword !== devCPassword) {
-      setError("Password do not match");
-      return;
-    }
     try {
       const response = await addDeveloper({
+        email: devEmail,
         fullName: devName,
-        user: devUsername,
-        pwd: devPassword,
-        userId: auth.auth.userId,
+        managerId: auth.userId,
       });
       console.log(response);
-      if (response.error.originalStatus === 409) {
-        setError("Username already exists.");
+      if (response?.error?.status === 409) {
+        setError("User with given email already exists.");
         return;
       }
     } catch (err) {
-      console.log(err);
+      console.log("Error:", err);
+      if (err?.error?.status === 409) {
+        setError("User with given email already exists.");
+        return;
+      }
     }
 
     setError("");
-    setDevCPassword("");
     setDevName("");
-    setDevPassword("");
-    setDevUsername("");
     setAddingDeveloper(false);
   }
   function handleEmptyDev() {
@@ -355,22 +350,11 @@ const Home = memo(() => {
             onChange={(e) => setDevName(e.target.value)}
           ></TextField>
           <TextField
-            label="Username"
-            value={devUsername}
-            onChange={(e) => setDevUsername(e.target.value)}
+            label="Email"
+            value={devEmail}
+            onChange={(e) => setDevEmail(e.target.value)}
           ></TextField>
-          <TextField
-            type="password"
-            label="Password"
-            value={devPassword}
-            onChange={(e) => setDevPassword(e.target.value)}
-          ></TextField>
-          <TextField
-            type="password"
-            label="Confirm Password"
-            value={devCPassword}
-            onChange={(e) => setDevCPassword(e.target.value)}
-          ></TextField>
+
           {error && <ErrorContainer>{error}</ErrorContainer>}
           <Button variant="contained" onClick={handleAddDeveloper}>
             Add Developer
@@ -389,7 +373,7 @@ const Home = memo(() => {
             </GridContainer>
             {projects?.length === 0 ? (
               <NoData
-                message="No Projects Aavailable"
+                message="No Projects Available"
                 onclick={() => setAddingProject(true)}
                 btnText="Add Project"
               ></NoData>
@@ -405,9 +389,9 @@ const Home = memo(() => {
                   {projects?.map((obj, i) => {
                     return (
                       <tr>
-                        <td>{obj.title}</td>
-                        <td>{obj.tickets.length}</td>
-                        <td>{obj.employees.length}</td>
+                        <td>{obj?.title}</td>
+                        <td>{obj?.tickets?.length}</td>
+                        <td>{obj?.employees?.length}</td>
                         <td>
                           <CenterFlexContainer>
                             <Button
@@ -420,7 +404,7 @@ const Home = memo(() => {
                                 background: "#D85959",
                                 color: "white",
                               }}
-                              onClick={() => handleDeleteProject(obj._id)}
+                              onClick={() => handleDeleteProject(obj.id)}
                             >
                               Delete
                             </Button>
@@ -460,8 +444,8 @@ const Home = memo(() => {
                       {myDevelopers?.map((obj, i) => (
                         <tr>
                           <td>{obj.fullName}</td>
-                          <td>{obj.projectsAssigned.length}</td>
-                          <td>{obj.ticketsAssigned.length}</td>
+                          <td>{obj?.projectsAssigned?.length}</td>
+                          <td>{obj?.ticketsAssigned?.length}</td>
                           <td>
                             <CenterFlexContainer style={{ gap: "8px" }}>
                               <Button
@@ -478,7 +462,7 @@ const Home = memo(() => {
                                   background: "#D85959",
                                   color: "white",
                                 }}
-                                onClick={() => handleDeleteDeveloper(obj._id)}
+                                onClick={() => handleDeleteDeveloper(obj.id)}
                               >
                                 Delete
                               </Button>
