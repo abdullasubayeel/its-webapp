@@ -159,8 +159,8 @@ function Navbar() {
     //     projectId: response?.data?.projectId,
     //     tickets: response?.data?.tickets,
     //     employex
-    // dispatch({ type: ACTION.reset });
-    // setAddingTicketModal(false);
+    dispatch({ type: ACTION.reset });
+    setAddingTicketModal(false);
   }
 
   async function handleLogout() {

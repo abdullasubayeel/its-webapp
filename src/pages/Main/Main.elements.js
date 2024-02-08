@@ -30,7 +30,7 @@ export const KanbanContainer = styled.div`
 `;
 
 export const KanbanColumn = styled(Container)`
-  height: 450px;
+  min-height: 700px;
   max-height: 75vh;
   justify-content: flex-start;
   align-items: flex-start;

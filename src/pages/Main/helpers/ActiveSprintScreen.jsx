@@ -51,6 +51,11 @@ import { customStyle } from "../../../utils/modalStyles";
 import { useGetDeveloperQuery } from "../../../api/endpoints/managerEndpoint";
 import NoData from "../../../components/NoData.jsx";
 import AuthContext from "../../../context/AuthProvider.js";
+import {
+  useDeleteTicketMutation,
+  useUpdateTicketDetailsMutation,
+  useUpdateTicketStatusMutation,
+} from "../../../api/endpoints/ticketsEndpoint.js";
 
 function ActiveSprintScreen() {
   const { id } = useParams();
@@ -63,11 +68,11 @@ function ActiveSprintScreen() {
   const [curTicket, setCurTicket] = useState({});
 
   const [updateTicketDetails, { isLoading: isUpdateTicketLoading }] =
-    useUpdateProjectTicketDetailsMutation();
+    useUpdateTicketDetailsMutation();
   const [changeTicketStatus, { isLoading: isChangeStatusLoading }] =
-    useUpdateProjectTicketStatusMutation();
+    useUpdateTicketStatusMutation();
   const [removeTicket, { isLoading: isRemoveTicketLoading }] =
-    useRemoveProjectTicketMutation();
+    useDeleteTicketMutation();
 
   const {
     data: myDevelopers,
@@ -124,7 +129,7 @@ function ActiveSprintScreen() {
     issueType: "",
     status: "",
     description: "",
-    assignee: [],
+    assignee: "",
     reporter: "",
     priority: "",
     title: "",
@@ -198,9 +203,9 @@ function ActiveSprintScreen() {
     },
   };
   async function handleUpdateSubmit() {
+    console.log("issssue", issueData);
     const response = await updateTicketDetails({
       ...issueData,
-      projectId: data.projectId,
       id: selectedId,
     });
     // dispatchRedux(
@@ -267,6 +272,7 @@ function ActiveSprintScreen() {
     dispatch({ type: ACTION.reporter, payload: ct.reporter });
     dispatch({ type: ACTION.priority, payload: ct.priority });
     dispatch({ type: ACTION.sprint, payload: ct.sprint });
+    dispatch({ type: ACTION.description, payload: ct.description });
     setAddingModal(true);
   }
 
@@ -334,9 +340,9 @@ function ActiveSprintScreen() {
 
       <KanbanContainer>
         <ReactModal
-          style={customStyle}
           isOpen={isAddingModal}
           onRequestClose={() => setAddingModal(false)}
+          style={customStyle}
         >
           <GridContainer
             style={{ borderBottom: "2px solid #ddd" }}
@@ -344,12 +350,11 @@ function ActiveSprintScreen() {
             justify="space-between"
             columns="auto auto"
           >
-            <Heading2>Update Issue</Heading2>
+            <Heading2>Create Issue</Heading2>
             <Close onClick={() => setAddingModal(false)} />
           </GridContainer>
 
           <GridContainer
-            style={{ overflowY: "scroll", height: "300px" }}
             justify="flex-start"
             place="flex-start"
             columns="1fr"
@@ -366,42 +371,43 @@ function ActiveSprintScreen() {
                 dispatch({ type: ACTION.title, payload: e.target.value });
               }}
             ></TextField>
-            <FormControl fullWidth>
-              <InputLabel id="issue-label">Issue Type *</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="issue-label"
-                value={issueData.issueType}
-                label="Issue Type *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.issueType, payload: e.target.value });
-                }}
-              >
-                {dummyIssues.map((dp) => {
-                  return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-            <HLine />
-
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Status</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.status}
-                label="Status *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.status, payload: e.target.value });
-                }}
-              >
-                {dummyStatus.map((dp) => {
-                  return <MenuItem value={dp.key}>{dp.status}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
+            <GridContainer columns="repeat(auto-fill,minmax(280px ,1fr))">
+              <FormControl fullWidth>
+                <InputLabel id="issue-label">Issue Type *</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="issue-label"
+                  value={issueData.issueType}
+                  label="Issue Type *"
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.issueType,
+                      payload: e.target.value,
+                    });
+                  }}
+                >
+                  {dummyIssues.map((dp) => {
+                    return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.status}
+                  label="Status *"
+                  onChange={(e) => {
+                    dispatch({ type: ACTION.status, payload: e.target.value });
+                  }}
+                >
+                  {dummyStatus.map((dp) => {
+                    return <MenuItem value={dp.key}>{dp.status}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+            </GridContainer>
 
             <TextField
               label="Description"
@@ -413,96 +419,102 @@ function ActiveSprintScreen() {
 
             <HLine />
 
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Reporter</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.reporter}
-                label="Reporter *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.reporter, payload: e.target.value });
-                }}
-              >
-                {data.employees?.map((obj) => {
-                  return (
-                    <MenuItem value={obj.fullName}>{obj.fullName}</MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Assignee</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.assignee}
-                label="Reporter *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.assignee, payload: e.target.value });
-                }}
-              >
-                {data.employees?.map((obj) => {
-                  return (
-                    <MenuItem value={obj.fullName}>{obj.fullName}</MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
+            <GridContainer columns="repeat(auto-fill,minmax(280px,1fr))">
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Reporter</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.reporter}
+                  label="Reporter *"
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.reporter,
+                      payload: e.target.value,
+                    });
+                  }}
+                >
+                  {data.employees?.map((dp) => {
+                    return <MenuItem value={dp.id}>{dp.fullName}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+
+              <FormControl>
+                <InputLabel id="demo-multiple-checkbox-label">
+                  Assignee
+                </InputLabel>
+                <Select
+                  labelId="demo-multiple-checkbox-label"
+                  value={issueData.assignee}
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.assignee,
+                      payload: e.target.value,
+                    });
+                  }}
+                  label="Assignee *"
+                >
+                  {data.employees?.map((dp) => {
+                    return <MenuItem value={dp.id}>{dp.fullName}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+            </GridContainer>
 
             <HLine />
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Priority</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.priority}
-                label="Priority *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.priority, payload: e.target.value });
-                }}
-              >
-                {dummyPriority.map((dp) => {
-                  return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Sprint</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.sprint}
-                label="Sprint"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.sprint, payload: e.target.value });
-                }}
-              >
-                {dummySprint.map((dp) => {
-                  return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-          </GridContainer>
-          <Absolute width="100%" bottom="0">
-            <GridContainer
-              justify="space-between"
-              style={{ borderTop: "2px solid #ddd" }}
-              padding="0 0.7rem"
-              columns="auto auto"
-            >
-              <TextButton onClick={() => setAddingModal(false)}>
-                Cancel
-              </TextButton>
-              <Button variant="contained" onClick={handleUpdateSubmit}>
-                Update
-              </Button>
+            <GridContainer columns="repeat(auto-fill,minmax(280px,1fr))">
+              <FormControl>
+                <InputLabel id="status-label">Priority</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.priority}
+                  label="Priority *"
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.priority,
+                      payload: e.target.value,
+                    });
+                  }}
+                >
+                  {dummyPriority.map((dp) => {
+                    return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+              <FormControl>
+                <InputLabel id="status-label">Sprint</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.sprint}
+                  label="Sprint"
+                  onChange={(e) => {
+                    dispatch({ type: ACTION.sprint, payload: e.target.value });
+                  }}
+                >
+                  {dummySprint.map((dp) => {
+                    return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
             </GridContainer>
-          </Absolute>
+          </GridContainer>
+
+          <GridContainer
+            justify="space-between"
+            style={{ borderTop: "2px solid #ddd" }}
+            padding="0 0.7rem"
+            columns="auto auto"
+          >
+            <TextButton onClick={() => setAddingTicketModal(false)}>
+              Cancel
+            </TextButton>
+            <Button variant="contained" onClick={handleUpdateSubmit}>
+              Update
+            </Button>
+          </GridContainer>
         </ReactModal>
 
         {data?.tickets?.length === 0 ? (
