@@ -3,11 +3,11 @@ import { apiSlice } from "../apiSlice";
 const projectEndPoints = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProjects: builder.query({
-      query: ({ managerId }) => `/projects`,
+      query: () => `/projects`,
       providesTags: ["Projects"],
     }),
     getSingleProject: builder.query({
-      query: (id) => `/projects?id=${id}`,
+      query: (id) => `/projects/${id}`,
       providesTags: ["Project"],
     }),
     addProject: builder.mutation({
@@ -28,9 +28,8 @@ const projectEndPoints = apiSlice.injectEndpoints({
     }),
     deleteProject: builder.mutation({
       query: (data) => ({
-        url: `/project?id=${data.id}`,
+        url: `/projects/${data.id}`,
         method: "DELETE",
-        body: data,
       }),
       invalidatesTags: ["Projects"],
     }),

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { LoginContainer } from "./Auth.elements";
-import { ErrorContainer, GridContainer, Heading, LinkText } from "../../Global";
+import {
+  ErrorContainer,
+  GridContainer,
+  Heading,
+  LinkText,
+} from "../../Global.tsx";
 import { Button, FormControlLabel, TextField } from "@mui/material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";

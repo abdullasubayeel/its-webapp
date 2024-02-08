@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useContext, useReducer, useState } from "react";
 import logo from "../assets/atom.png";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import ReactModal from "react-modal";
@@ -17,7 +17,7 @@ import {
   HLine,
   Absolute,
   TextButton,
-} from "../Global";
+} from "../Global.tsx";
 import SearchField from "./SearchField";
 import { FaSearch } from "react-icons/fa";
 import {
@@ -42,6 +42,7 @@ import { useDispatch } from "react-redux";
 import { setProjectData } from "../reduxSlices/projectsSlice";
 import { useGetDeveloperQuery } from "../api/endpoints/managerEndpoint";
 import { BASE_URL } from "../utils/constants";
+import AuthContext from "../context/AuthProvider.js";
 
 const ACTION = {
   projectId: "handleProjectId",
@@ -56,6 +57,7 @@ const ACTION = {
 };
 function Navbar() {
   const location = useLocation();
+  const { isAddingTicketModal, setAddingTicketModal } = useContext(AuthContext);
 
   const [addTicket, { isLoading: isAddTicketLoading }] =
     useAddProjectTicketMutation();
@@ -67,10 +69,8 @@ function Navbar() {
 
   const navigate = useNavigate();
   const data = useSelector((state) => state.project);
-  console.log(data);
-  const dispatchRedux = useDispatch();
 
-  const [isAddingModal, setAddingModal] = useState(false);
+  const dispatchRedux = useDispatch();
 
   function reducer(state, action) {
     switch (action.type) {
@@ -115,10 +115,10 @@ function Navbar() {
     title: "",
   });
   function openModal() {
-    setAddingModal(true);
+    setAddingTicketModal(true);
   }
   function closeModal() {
-    setAddingModal(false);
+    setAddingTicketModal(false);
   }
 
   const dummyIssues = [
@@ -162,7 +162,7 @@ function Navbar() {
       })
     );
     dispatch({ type: ACTION.reset });
-    setAddingModal(false);
+    setAddingTicketModal(false);
   }
 
   async function handleLogout() {
@@ -180,7 +180,7 @@ function Navbar() {
     <>
       <NavContainer>
         <ReactModal
-          isOpen={isAddingModal}
+          isOpen={isAddingTicketModal}
           onRequestClose={closeModal}
           style={customStyle}
         >
@@ -191,7 +191,7 @@ function Navbar() {
             columns="auto auto"
           >
             <Heading2>Create Issue</Heading2>
-            <Close onClick={() => setAddingModal(false)} />
+            <Close onClick={() => setAddingTicketModal(false)} />
           </GridContainer>
 
           <GridContainer
@@ -338,7 +338,7 @@ function Navbar() {
               padding="0 0.7rem"
               columns="auto auto"
             >
-              <TextButton onClick={() => setAddingModal(false)}>
+              <TextButton onClick={() => setAddingTicketModal(false)}>
                 Cancel
               </TextButton>
               <Button variant="contained" onClick={handleSubmit}>
@@ -383,7 +383,7 @@ function Navbar() {
 
           <Button
             variant="container"
-            style={{ background: "#224368", color: "white", fontWeight: "600" }}
+            style={{ background: "#224368", color: "white", fontWeight: "400" }}
             onClick={handleLogout}
           >
             Logout

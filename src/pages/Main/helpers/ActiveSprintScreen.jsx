@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer, useContext } from "react";
 import { DragDropContext, Draggable } from "react-beautiful-dnd";
 import { StrictModeDroppable as Droppable } from "../../../utils/StrictModeDroppable";
 import { useDispatch } from "react-redux";
@@ -16,7 +16,9 @@ import {
   Absolute,
   TextButton,
   MainContainer,
-} from "../../../Global";
+  HLine,
+  Heading2,
+} from "../../../Global.tsx";
 import {
   JobSmallText,
   JobSubTitle,
@@ -24,9 +26,6 @@ import {
   SkillTile,
 } from "../Main.elements";
 
-import { HLine } from "../../../Global";
-
-import { Heading2 } from "../../../Global";
 import { Close } from "@mui/icons-material";
 import { DeleteIcon } from "../Main.elements";
 import {
@@ -50,17 +49,17 @@ import {
 import ReactModal from "react-modal";
 import { customStyle } from "../../../utils/modalStyles";
 import { useGetDeveloperQuery } from "../../../api/endpoints/managerEndpoint";
+import NoData from "../../../components/NoData.jsx";
+import AuthContext from "../../../context/AuthProvider.js";
 function ActiveSprintScreen() {
   const { id } = useParams();
+  const { setAddingTicketModal } = useContext(AuthContext);
 
   const data = useSelector((state) => state.project);
-
-  // const [newData, setNewData] = useState(data);
 
   const [selectedId, setSelectedId] = useState();
   const [isAddingModal, setAddingModal] = useState(false);
   const [curTicket, setCurTicket] = useState({});
-  const [personName, setPersonName] = useState([]);
 
   const [updateTicketDetails, { isLoading: isUpdateTicketLoading }] =
     useUpdateProjectTicketDetailsMutation();
@@ -281,8 +280,17 @@ function ActiveSprintScreen() {
   const [devFilter, setDevFilter] = useState("");
   const [selectedEpic, setSelectedEpic] = useState("");
 
+  const handleCreateTicket = () => {
+    setAddingTicketModal(true);
+  };
+  console.log(data);
   return (
-    <GridContainer align="flex-start" place="flex-start" margin="1rem 0">
+    <GridContainer
+      columns="1fr"
+      align="flex-start"
+      place="flex-start"
+      margin="1rem 0"
+    >
       <GridContainer width="100%" columns="auto 1fr 1fr">
         <TextField
           sx={{ width: "100px" }}
@@ -496,113 +504,130 @@ function ActiveSprintScreen() {
           </Absolute>
         </ReactModal>
 
-        <DragDropContext
-          onDragEnd={(result) => handleOnDragEnd(result, columns, setColumns)}
-        >
-          {Object.entries(columns).map(([id, column]) => {
-            return (
-              <Droppable droppableId={id}>
-                {(provided, snapshot) => {
-                  return (
-                    <Container>
-                      <Heading2>{column.name}</Heading2>
-                      <KanbanColumn
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={{
-                          background: snapshot.isDraggingOver
-                            ? "#EBFFC8 "
-                            : "#EFF2E9",
-                          marginRight: "1rem",
-                        }}
-                      >
-                        {column?.items
-                          ?.filter((obj) => {
-                            if (selectedDev.length !== 0) {
-                              return selectedDev.includes(obj.assignee);
-                            } else {
-                              return true;
-                            }
-                          })
-                          .map((item, index) => {
-                            return (
-                              <Draggable
-                                key={item._id}
-                                draggableId={item._id}
-                                index={index}
-                              >
-                                {(provided, snapshot) => (
-                                  <KanbanCard
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    ref={provided.innerRef}
-                                    style={{
-                                      userSelect: "none",
-                                      display: "grid",
-                                      width: "calc(100% - 16px - 2rem)",
-                                      gridTemplateColumns: "1fr",
-                                      margin: "8px",
-                                      backgroundColor: snapshot.isDragging
-                                        ? "#CBCBCB "
-                                        : "#fff",
-                                      ...provided.draggableProps.style,
-                                    }}
-                                  >
-                                    <GridContainer
-                                      columns="1fr auto"
-                                      width="100%"
+        {data?.tickets?.length === 0 ? (
+          <div
+            style={{
+              display: "flex",
+              height: "70vh",
+              margin: "auto",
+              alignItems: "center",
+            }}
+          >
+            <NoData
+              message={"No tickets have been added."}
+              btnText={"Create Ticket"}
+              onclick={handleCreateTicket}
+            />
+          </div>
+        ) : (
+          <DragDropContext
+            onDragEnd={(result) => handleOnDragEnd(result, columns, setColumns)}
+          >
+            {Object.entries(columns).map(([id, column]) => {
+              return (
+                <Droppable droppableId={id}>
+                  {(provided, snapshot) => {
+                    return (
+                      <Container>
+                        <Heading2>{column.name}</Heading2>
+                        <KanbanColumn
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          style={{
+                            background: snapshot.isDraggingOver
+                              ? "#EBFFC8 "
+                              : "#EFF2E9",
+                            marginRight: "1rem",
+                          }}
+                        >
+                          {column?.items
+                            ?.filter((obj) => {
+                              if (selectedDev.length !== 0) {
+                                return selectedDev.includes(obj.assignee);
+                              } else {
+                                return true;
+                              }
+                            })
+                            .map((item, index) => {
+                              return (
+                                <Draggable
+                                  key={item._id}
+                                  draggableId={item._id}
+                                  index={index}
+                                >
+                                  {(provided, snapshot) => (
+                                    <KanbanCard
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      ref={provided.innerRef}
+                                      style={{
+                                        userSelect: "none",
+                                        display: "grid",
+                                        width: "calc(100% - 16px - 2rem)",
+                                        gridTemplateColumns: "1fr",
+                                        margin: "8px",
+                                        backgroundColor: snapshot.isDragging
+                                          ? "#CBCBCB "
+                                          : "#fff",
+                                        ...provided.draggableProps.style,
+                                      }}
                                     >
-                                      <JobSubTitle style={{ margin: "0" }}>
-                                        {item.title}
-                                      </JobSubTitle>
-                                      <DeleteIcon
-                                        onClick={() =>
-                                          handleDeleteTicket(item._id)
-                                        }
-                                      />
-                                    </GridContainer>
-                                    <TileHeading>
-                                      {item.description}
-                                    </TileHeading>
-                                    <JobSmallText>
-                                      Priority:&nbsp;{item.priority}
-                                    </JobSmallText>
-
-                                    <GridContainer
-                                      justify="flex-start"
-                                      gap="0"
-                                      columns="auto auto"
-                                    >
-                                      <LightText>Reporter:&nbsp;</LightText>
-                                      <LightText>{item.reporter}</LightText>
-                                    </GridContainer>
-                                    <HLine />
-                                    <CenterFlexContainer justify="space-between">
-                                      <Container align="flex-start">
-                                        <LightText>Assignee:&nbsp;</LightText>
-                                        <LightText>{item.assignee}</LightText>
-                                      </Container>
-
-                                      <Button
-                                        onClick={() => openModal(item._id)}
+                                      <GridContainer
+                                        columns="1fr auto"
+                                        width="100%"
                                       >
-                                        Update
-                                      </Button>
-                                    </CenterFlexContainer>
-                                  </KanbanCard>
-                                )}
-                              </Draggable>
-                            );
-                          })}
-                        {provided.placeholder}
-                      </KanbanColumn>
-                    </Container>
-                  );
-                }}
-              </Droppable>
-            );
-          })}
-        </DragDropContext>
+                                        <JobSubTitle style={{ margin: "0" }}>
+                                          {item.title}
+                                        </JobSubTitle>
+                                        <DeleteIcon
+                                          onClick={() =>
+                                            handleDeleteTicket(item._id)
+                                          }
+                                        />
+                                      </GridContainer>
+                                      <TileHeading>
+                                        {item.description}
+                                      </TileHeading>
+                                      <JobSmallText>
+                                        Priority:&nbsp;{item.priority}
+                                      </JobSmallText>
+
+                                      <GridContainer
+                                        justify="flex-start"
+                                        gap="0"
+                                        columns="auto auto"
+                                      >
+                                        <LightText>Reporter:&nbsp;</LightText>
+                                        <LightText>{item.reporter}</LightText>
+                                      </GridContainer>
+                                      <HLine />
+                                      <CenterFlexContainer justify="space-between">
+                                        <Container align="flex-start">
+                                          <LightText>Assignee:&nbsp;</LightText>
+                                          <LightText>{item.assignee}</LightText>
+                                        </Container>
+
+                                        <Button
+                                          onClick={() => openModal(item._id)}
+                                        >
+                                          Update
+                                        </Button>
+                                      </CenterFlexContainer>
+                                    </KanbanCard>
+                                  )}
+                                </Draggable>
+                              );
+                            })}
+                          {provided.placeholder}
+                        </KanbanColumn>
+                      </Container>
+                    );
+                  }}
+                </Droppable>
+              );
+            })}
+          </DragDropContext>
+        )}
       </KanbanContainer>
     </GridContainer>
   );

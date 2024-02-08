@@ -5,7 +5,7 @@ import {
   Heading2,
   LightText,
   MainContainer,
-} from "../../Global";
+} from "../../Global.tsx";
 import { MenuBar } from "./Main.elements";
 
 import logo2 from "../../assets/logo2.png";
@@ -73,15 +73,15 @@ function Dashboard() {
   useEffect(() => {
     dispatch(
       setProjectData({
-        projectId: singleProject?._id,
+        projectId: singleProject?.id,
         description: singleProject?.description,
         tickets: singleProject?.tickets,
-        employees: singleProject?.employees,
+        employees: singleProject?.developers,
         title: singleProject?.title,
       })
     );
   }, [singleProject]);
-  const data = useSelector((state) => state.project);
+  console.log("single", singleProject);
 
   return (
     <GridContainer

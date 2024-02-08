@@ -1,5 +1,9 @@
 import styled from "styled-components";
-import { GridContainer, Container, CenterFlexContainer } from "../../Global";
+import {
+  GridContainer,
+  Container,
+  CenterFlexContainer,
+} from "../../Global.tsx";
 import { Delete } from "@mui/icons-material";
 
 export const MenuBar = styled(GridContainer)`
@@ -114,22 +118,27 @@ export const TableContainer = styled.div`
     color: #666;
     background: white;
     border: 1px solid grey;
-    border-radius: 4px;
+
     font-size: 12pt;
     border-collapse: collapse;
 
     & > tr {
       padding: 8px 4px;
+      font-size: 14px;
       & > td,
       th {
         text-align: center;
         padding: 0.5em;
         margin: auto;
         border: 1px solid lightgrey;
-        border-radius: 4px;
+
+        background-color: #6b7ebf44;
       }
       th {
         font-weight: 500;
+      }
+      td {
+        background-color: #fff;
       }
     }
   }

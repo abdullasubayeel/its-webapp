@@ -18,8 +18,8 @@ const developerEndpoint = apiSlice.injectEndpoints({
 
     updateDeveloper: builder.mutation({
       query: (data) => ({
-        url: `/developer/${data.id}`,
-        method: "PUT",
+        url: `/user/${data.id}`,
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: ["Developer"],

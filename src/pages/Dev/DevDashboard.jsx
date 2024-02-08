@@ -5,7 +5,7 @@ import {
   GridContainer,
   HeroText,
   MainContainer,
-} from "../../Global";
+} from "../../Global.tsx";
 import { TableContainer } from "../Main/Main.elements";
 
 import { useNavigate } from "react-router-dom";
@@ -13,10 +13,12 @@ import { Button } from "@mui/material";
 import { useGetAssignedProjectsQuery } from "../../api/endpoints/userEndpoint";
 
 import NoData from "../../components/NoData";
+import { useSelector } from "react-redux";
 
 const DevDashboard = memo(() => {
   const navigate = useNavigate();
-
+  const data = useSelector((state) => state.project);
+  console.log("data", data);
   const { data: assignedProjects } = useGetAssignedProjectsQuery();
 
   return (
@@ -41,12 +43,12 @@ const DevDashboard = memo(() => {
                   return (
                     <tr>
                       <td>{obj.title}</td>
-                      <td>{obj.tickets.length}</td>
-                      <td>{obj.employees.length}</td>
+                      <td>{obj.ticketsCount}</td>
+                      <td>{obj.developersCount}</td>
                       <td>
                         <CenterFlexContainer>
                           <Button
-                            onClick={() => navigate(`/dev/project/${obj._id}`)}
+                            onClick={() => navigate(`/dev/project/${obj.id}`)}
                           >
                             View
                           </Button>

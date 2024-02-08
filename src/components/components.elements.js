@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CenterFlexContainer, GridContainer } from "../Global";
+import { CenterFlexContainer, GridContainer } from "../Global.tsx";
 
 export const NavContainer = styled.div`
   border-bottom: 2px solid #ddd;
@@ -13,7 +13,7 @@ export const NavWrapper = styled(GridContainer)`
   grid-template-columns: 1fr 4fr 2fr auto;
   width: 100%;
   height: 60px;
-  /* max-width: 1140px; */
+  max-width: 1240px;
   margin: auto;
 `;
 
@@ -32,6 +32,7 @@ export const NavLinks = styled.ul`
     color: #000;
     font-weight: 400;
     transition: 0.5s;
+    font-size: 14px;
     &:hover {
       cursor: pointer;
       font-weight: 500;

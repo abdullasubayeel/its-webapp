@@ -1,9 +1,9 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { CenterFlexContainer, LightText } from "../../Global";
+import { CenterFlexContainer, LightText } from "../../Global.tsx";
 import { Button } from "@mui/material";
 import { AuthNav } from "./Auth.elements";
-import { GridContainer } from "../../Global";
+import { GridContainer } from "../../Global.tsx";
 
 import logo from "../../assets/atom.png";
 

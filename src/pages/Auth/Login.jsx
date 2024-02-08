@@ -5,7 +5,7 @@ import {
   GridContainer,
   Heading,
   LinkText,
-} from "../../Global";
+} from "../../Global.tsx";
 import {
   Button,
   Checkbox,

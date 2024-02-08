@@ -6,7 +6,7 @@ import {
   ErrorContainer,
   GridContainer,
   LinkText,
-} from "../../Global";
+} from "../../Global.tsx";
 import { Button, TextField } from "@mui/material";
 import axios from "../../api/axios";
 import { Link, useNavigate } from "react-router-dom";

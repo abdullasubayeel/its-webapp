@@ -11,7 +11,7 @@ import {
   LightText,
   LinkText,
   MainContainer,
-} from "../../Global";
+} from "../../Global.tsx";
 import { TableContainer } from "./Main.elements";
 
 import { useNavigate } from "react-router-dom";
@@ -109,18 +109,17 @@ const Home = memo(() => {
   const openAddDevelopersModal = () => {
     setAddingDeveloper(true);
   };
-
+  console.log(uProjects);
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
+
+    setPersonName(typeof value === "string" ? value.split(",") : value);
 
     setSelectedEmployees(value);
   };
+
   const handleProjectAssigning = (event) => {
     const {
       target: { value },
@@ -137,12 +136,7 @@ const Home = memo(() => {
     await addProject({
       title: pTitle,
       description: pDesc,
-      employees: selectedEmployees.map((id) => {
-        return {
-          userId: id,
-          fullName: myDevelopers.find((no) => no._id === id).fullName,
-        };
-      }),
+      employees: personName,
     });
 
     setPDesc("");
@@ -175,14 +169,17 @@ const Home = memo(() => {
     setDevName("");
     setAddingDeveloper(false);
   }
+
   function handleEmptyDev() {
     setAddingProject(false);
     setAddingDeveloper(true);
   }
+
   function handleEmptyProjects() {
     setDevUpdateModal(false);
     setAddingProject(true);
   }
+
   //TODO :create delete endpoint
   async function handleDeleteDeveloper(did) {
     try {
@@ -191,6 +188,7 @@ const Home = memo(() => {
       console.log(e);
     }
   }
+
   //TODO :create delete endpoint
   async function handleDeleteProject(pid) {
     try {
@@ -199,24 +197,25 @@ const Home = memo(() => {
       console.log(e);
     }
   }
-
+  console.log("md", myDevelopers);
   //TODO: Update existing employee
   async function handleDevEdit(id) {
-    setCurrentDev(myDevelopers.find((obj) => obj._id == id));
+    setCurrentDev(myDevelopers.find((obj) => obj.id == id));
 
-    const cd = myDevelopers.find((obj) => obj._id == id);
+    const cd = myDevelopers.find((obj) => obj.id == id);
 
-    console.log("cd", cd);
     setUFullName(cd.fullName);
-    setUProjects(cd.projectsAssigned.map((p) => p._id));
+    setUProjects(cd.projects.map((p) => p.projectId));
     setDevUpdateModal(true);
   }
 
   const handleUpdateDeveloper = async () => {
     await updateDeveloper({
-      id: currentDev._id,
+      id: currentDev.id,
       fullName: uFullName,
-      projects: projects.filter((proj) => uProjects.includes(proj._id)),
+      projects: projects
+        .filter((proj) => uProjects.includes(proj.id))
+        .map((obj) => obj.id),
     });
   };
   return (
@@ -246,15 +245,15 @@ const Home = memo(() => {
               input={<OutlinedInput label="Assign Project" />}
               renderValue={(selected) =>
                 selected
-                  .map((obj) => projects.find((no) => no._id === obj).title)
+                  .map((obj) => projects.find((no) => no.id === obj)?.title)
                   .join(", ")
               }
               MenuProps={MenuProps}
               disabled={projects?.length === 0}
             >
               {projects?.map((obj) => (
-                <MenuItem key={obj.title} value={obj._id}>
-                  <Checkbox checked={uProjects.indexOf(obj._id) > -1} />
+                <MenuItem key={obj.title} value={obj.id}>
+                  <Checkbox checked={uProjects.indexOf(obj.id) > -1} />
                   <ListItemText primary={obj.title} />
                 </MenuItem>
               ))}
@@ -307,7 +306,7 @@ const Home = memo(() => {
               renderValue={(selected) =>
                 selected
                   .map(
-                    (obj) => myDevelopers.find((no) => no._id === obj).fullName
+                    (obj) => myDevelopers.find((no) => no.id === obj).fullName
                   )
                   .join(", ")
               }
@@ -315,8 +314,8 @@ const Home = memo(() => {
               disabled={myDevelopers?.length === 0}
             >
               {myDevelopers?.map((obj) => (
-                <MenuItem key={obj.fullName} value={obj._id}>
-                  <Checkbox checked={personName.indexOf(obj._id) > -1} />
+                <MenuItem key={obj.fullName} value={obj.id}>
+                  <Checkbox checked={personName.indexOf(obj.id) > -1} />
                   <ListItemText primary={obj.fullName} />
                 </MenuItem>
               ))}
@@ -362,8 +361,9 @@ const Home = memo(() => {
         </GridContainer>
       </ReactModal>
       <GridContainer
-        columns="repeat(auto-fill,minmax(400px,1fr))"
-        align="stretchs"
+        columns="repeat(auto-fill,minmax(500px,1fr))"
+        align="stretch"
+        justify="stretch"
       >
         <CardContainer>
           <GridContainer columns="1fr" width="100%">
@@ -390,12 +390,12 @@ const Home = memo(() => {
                     return (
                       <tr>
                         <td>{obj?.title}</td>
-                        <td>{obj?.tickets?.length}</td>
-                        <td>{obj?.employees?.length}</td>
+                        <td>{obj?.ticketsCount}</td>
+                        <td>{obj?.developersCount}</td>
                         <td>
                           <CenterFlexContainer>
                             <Button
-                              onClick={() => navigate(`/project/${obj._id}`)}
+                              onClick={() => navigate(`/project/${obj.id}`)}
                             >
                               View
                             </Button>
@@ -424,57 +424,54 @@ const Home = memo(() => {
               <HeroText>Developers</HeroText>
               <AddIcon onClick={openAddDevelopersModal}></AddIcon>
             </GridContainer>
-            <GridContainer>
-              {myDevelopers?.length === 0 ? (
-                <NoData
-                  message="No Developers assigned to you"
-                  onclick={() => setAddingDeveloper(true)}
-                  btnText="Add Developer"
-                ></NoData>
-              ) : (
-                <GridContainer columns="1fr">
-                  <TableContainer>
-                    <table>
-                      <tr>
-                        <th>Name</th>
-                        <th>Projects Undertaken</th>
-                        <th>Tickets Undertaken</th>
-                        <th>ACTION</th>
-                      </tr>
-                      {myDevelopers?.map((obj, i) => (
-                        <tr>
-                          <td>{obj.fullName}</td>
-                          <td>{obj?.projectsAssigned?.length}</td>
-                          <td>{obj?.ticketsAssigned?.length}</td>
-                          <td>
-                            <CenterFlexContainer style={{ gap: "8px" }}>
-                              <Button
-                                style={{
-                                  background: "#90c1d7",
-                                  color: "white",
-                                }}
-                                onClick={() => handleDevEdit(obj?._id)}
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                style={{
-                                  background: "#D85959",
-                                  color: "white",
-                                }}
-                                onClick={() => handleDeleteDeveloper(obj.id)}
-                              >
-                                Delete
-                              </Button>
-                            </CenterFlexContainer>
-                          </td>
-                        </tr>
-                      ))}
-                    </table>
-                  </TableContainer>
-                </GridContainer>
-              )}
-            </GridContainer>
+
+            {myDevelopers?.length === 0 ? (
+              <NoData
+                message="No Developers assigned to you"
+                onclick={() => setAddingDeveloper(true)}
+                btnText="Add Developer"
+              ></NoData>
+            ) : (
+              <TableContainer>
+                <table>
+                  <tr>
+                    <th>Name</th>
+                    <th>Projects Undertaken</th>
+                    <th>Tickets Undertaken</th>
+                    <th>ACTION</th>
+                  </tr>
+                  {myDevelopers?.map((obj, i) => (
+                    <tr>
+                      <td>{obj?.fullName}</td>
+                      <td>{obj?.projectsCount}</td>
+                      <td>{obj?.assignedTicketsCount}</td>
+                      <td>
+                        <CenterFlexContainer style={{ gap: "8px" }}>
+                          <Button
+                            style={{
+                              background: "#90c1d7",
+                              color: "white",
+                            }}
+                            onClick={() => handleDevEdit(obj?.id)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            style={{
+                              background: "#D85959",
+                              color: "white",
+                            }}
+                            onClick={() => handleDeleteDeveloper(obj.id)}
+                          >
+                            Delete
+                          </Button>
+                        </CenterFlexContainer>
+                      </td>
+                    </tr>
+                  ))}
+                </table>
+              </TableContainer>
+            )}
           </GridContainer>
         </CardContainer>
       </GridContainer>
@@ -497,7 +494,7 @@ const Home = memo(() => {
                   </JobSmallText>
                   <LightText>{obj.description}</LightText>
                 </>
-                <Button onClick={() => navigate(`/project/${obj._id}`)}>
+                <Button onClick={() => navigate(`/project/${obj.id}`)}>
                   View
                 </Button>
               </GridContainer>

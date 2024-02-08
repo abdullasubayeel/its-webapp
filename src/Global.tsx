@@ -5,8 +5,9 @@ import styled from "styled-components";
 
 export const CenterFlexContainer = styled.div`
   display: flex;
-  align-items: ${(props) => (props.align ? props.align : "center")};
-  justify-content: ${(props) => (props.justify ? props.justify : "center")};
+  align-items: ${(props: any) => (props.align ? props.align : "center")};
+  justify-content: ${(props: any) =>
+    props.justify ? props.justify : "center"};
 `;
 
 export const Container = styled(CenterFlexContainer)`
@@ -14,20 +15,22 @@ export const Container = styled(CenterFlexContainer)`
 `;
 
 export const MainContainer = styled.div`
-  margin: auto;
-  max-width: 1140px;
+  margin: 1rem auto;
+  max-width: 1240px;
+  padding: 0 1rem;
 `;
 
 export const GridContainer = styled.div`
-  display: grid;
+  display: grid !important;
   box-sizing: "border-box";
-  gap: ${(props) => (props.gap ? props.gap : "1rem")};
-  grid-template-columns: ${(props) => props.columns};
-  place-content: ${(props) => (props.place ? props.place : "center")};
-  align-items: ${(props) => (props.align ? props.align : "center")};
-  justify-content: ${(props) => (props.justify ? props.justify : "center")};
-  margin: ${(props) => props.margin};
-  padding: ${(props) => props.padding};
+  gap: ${(props: any) => (props.gap ? props.gap : "1rem")};
+  grid-template-columns: ${(props: any) => props.columns};
+  place-content: ${(props: any) => (props.place ? props.place : "center")};
+  align-items: ${(props: any) => (props.align ? props.align : "center")};
+  justify-content: ${(props: any) =>
+    props.justify ? props.justify : "center"};
+  margin: ${(props: any) => props.margin};
+  padding: ${(props: any) => props.padding};
 `;
 
 export const RelativeContainer = styled.div`
@@ -35,11 +38,11 @@ export const RelativeContainer = styled.div`
 `;
 export const Absolute = styled.div`
   position: absolute;
-  width: ${(props) => props.width};
-  top: ${(props) => props.top};
-  right: ${(props) => props.right};
-  bottom: ${(props) => props.bottom};
-  left: ${(props) => props.left};
+  width: ${(props: any) => props.width};
+  top: ${(props: any) => props.top};
+  right: ${(props: any) => props.right};
+  bottom: ${(props: any) => props.bottom};
+  left: ${(props: any) => props.left};
 `;
 
 export const FullScreen = styled.div`
@@ -56,8 +59,8 @@ export const HLine = styled.hr`
 export const CardContainer = styled(CenterFlexContainer)`
   flex-wrap: wrap;
   flex: 1;
-  margin: 1rem 0;
-  padding: 1.8rem;
+  margin: 0;
+  padding: 1.3rem;
   justify-content: flex-start;
   align-items: flex-start;
   background-color: #fff;
@@ -102,7 +105,7 @@ export const TextField = styled.input`
 
 export const HeroText = styled.h1`
   color: #6b7ebf;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.5px;
   width: 100%;
