@@ -18,7 +18,7 @@ import { useSelector } from "react-redux";
 const DevDashboard = memo(() => {
   const navigate = useNavigate();
   const data = useSelector((state) => state.project);
-  console.log("data", data);
+
   const { data: assignedProjects } = useGetAssignedProjectsQuery();
 
   return (

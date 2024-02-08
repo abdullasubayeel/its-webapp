@@ -49,7 +49,7 @@ function Login() {
         }
       );
 
-      const accessToken = response?.data?.access_token;
+      const accessToken = response?.data?.accessToken;
       const user = jwtDecode(accessToken);
       console.log(user.UserInfo.email);
       const userId = user.UserInfo.userId;
@@ -64,6 +64,7 @@ function Login() {
         }
       }
       setAuth({ email: token_email, roles, accessToken, userId });
+
       dispatch(setCredentials({ ...response.data }));
       setUser("");
       setPwd("");

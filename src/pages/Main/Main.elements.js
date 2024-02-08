@@ -30,7 +30,7 @@ export const KanbanContainer = styled.div`
 `;
 
 export const KanbanColumn = styled(Container)`
-  /* height: 450px; */
+  height: 450px;
   max-height: 75vh;
   justify-content: flex-start;
   align-items: flex-start;
@@ -38,6 +38,7 @@ export const KanbanColumn = styled(Container)`
   overflow-x: hidden;
   padding: 8px;
   border-radius: 4px;
+  min-width: 200px;
 `;
 
 export const KanbanCard = styled.div`

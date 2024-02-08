@@ -81,7 +81,6 @@ function Dashboard() {
       })
     );
   }, [singleProject]);
-  console.log("single", singleProject);
 
   return (
     <GridContainer

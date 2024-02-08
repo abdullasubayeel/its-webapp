@@ -1,13 +1,18 @@
 export const customStyle = {
   content: {
-    padding: "0 0 80px 0",
+    padding: "0",
     width: "max-content",
     margin: "auto",
-    width: "500px",
-    position: "relative",
+    minWidth: "700px",
+    height: "fit-content",
+    maxHeight: "80vh",
   },
   overlay: {
     zIndex: 99,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 };
 export const projectModalStyle = {

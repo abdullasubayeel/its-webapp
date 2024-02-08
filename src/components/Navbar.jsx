@@ -43,6 +43,7 @@ import { setProjectData } from "../reduxSlices/projectsSlice";
 import { useGetDeveloperQuery } from "../api/endpoints/managerEndpoint";
 import { BASE_URL } from "../utils/constants";
 import AuthContext from "../context/AuthProvider.js";
+import { useAddTicketMutation } from "../api/endpoints/ticketsEndpoint.js";
 
 const ACTION = {
   projectId: "handleProjectId",
@@ -59,8 +60,7 @@ function Navbar() {
   const location = useLocation();
   const { isAddingTicketModal, setAddingTicketModal } = useContext(AuthContext);
 
-  const [addTicket, { isLoading: isAddTicketLoading }] =
-    useAddProjectTicketMutation();
+  const [addTicket, { isLoading: isAddTicketLoading }] = useAddTicketMutation();
   const {
     data: myDevelopers,
     isLoading: isDevelopersLoading,
@@ -71,7 +71,7 @@ function Navbar() {
   const data = useSelector((state) => state.project);
 
   const dispatchRedux = useDispatch();
-
+  console.log("data", data);
   function reducer(state, action) {
     switch (action.type) {
       case ACTION.projectId:
@@ -94,7 +94,6 @@ function Navbar() {
         return { ...state, sprint: action.payload };
       case ACTION.reset:
         return {
-          projectId: "",
           issueType: "",
           status: "",
           description: "",
@@ -147,22 +146,21 @@ function Navbar() {
     { id: 4, type: "Sprint 4" },
   ];
 
+  console.log("project ID", data?.projectId);
   async function handleSubmit() {
     const response = await addTicket({
       ...issueData,
-      projectId: data.projectId,
+      projectId: data?.projectId,
     });
-    dispatchRedux(
-      setProjectData({
-        title: response?.data?.title,
-        description: response?.data?.description,
-        projectId: response?.data?.projectId,
-        tickets: response?.data?.tickets,
-        employees: response?.data?.employees,
-      })
-    );
-    dispatch({ type: ACTION.reset });
-    setAddingTicketModal(false);
+    // dispatchRedux(
+    //   setProjectData({
+    //     title: response?.data?.title,
+    //     description: response?.data?.description,
+    //     projectId: response?.data?.projectId,
+    //     tickets: response?.data?.tickets,
+    //     employex
+    // dispatch({ type: ACTION.reset });
+    // setAddingTicketModal(false);
   }
 
   async function handleLogout() {
@@ -195,7 +193,6 @@ function Navbar() {
           </GridContainer>
 
           <GridContainer
-            style={{ overflowY: "scroll", height: "300px" }}
             justify="flex-start"
             place="flex-start"
             columns="1fr"
@@ -212,42 +209,43 @@ function Navbar() {
                 dispatch({ type: ACTION.title, payload: e.target.value });
               }}
             ></TextField>
-            <FormControl fullWidth>
-              <InputLabel id="issue-label">Issue Type *</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="issue-label"
-                value={issueData.issueType}
-                label="Issue Type *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.issueType, payload: e.target.value });
-                }}
-              >
-                {dummyIssues.map((dp) => {
-                  return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-            <HLine />
-
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Status</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.status}
-                label="Status *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.status, payload: e.target.value });
-                }}
-              >
-                {dummyStatus.map((dp) => {
-                  return <MenuItem value={dp.key}>{dp.status}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
+            <GridContainer columns="repeat(auto-fill,minmax(280px ,1fr))">
+              <FormControl fullWidth>
+                <InputLabel id="issue-label">Issue Type *</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="issue-label"
+                  value={issueData.issueType}
+                  label="Issue Type *"
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.issueType,
+                      payload: e.target.value,
+                    });
+                  }}
+                >
+                  {dummyIssues.map((dp) => {
+                    return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.status}
+                  label="Status *"
+                  onChange={(e) => {
+                    dispatch({ type: ACTION.status, payload: e.target.value });
+                  }}
+                >
+                  {dummyStatus.map((dp) => {
+                    return <MenuItem value={dp.key}>{dp.status}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+            </GridContainer>
 
             <TextField
               label="Description"
@@ -259,93 +257,102 @@ function Navbar() {
 
             <HLine />
 
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Reporter</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.reporter}
-                label="Reporter *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.reporter, payload: e.target.value });
-                }}
-              >
-                {data.employees?.map((dp) => {
-                  return <MenuItem value={dp.fullName}>{dp.fullName}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
+            <GridContainer columns="repeat(auto-fill,minmax(280px,1fr))">
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Reporter</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.reporter}
+                  label="Reporter *"
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.reporter,
+                      payload: e.target.value,
+                    });
+                  }}
+                >
+                  {data.employees?.map((dp) => {
+                    return <MenuItem value={dp.id}>{dp.fullName}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
 
-            <FormControl sx={{ width: 300 }}>
-              <InputLabel id="demo-multiple-checkbox-label">
-                Assignee
-              </InputLabel>
-              <Select
-                labelId="demo-multiple-checkbox-label"
-                value={issueData.assignee}
-                onChange={(e) => {
-                  dispatch({ type: ACTION.assignee, payload: e.target.value });
-                }}
-                label="Assignee *"
-              >
-                {data.employees?.map((dp) => {
-                  return <MenuItem value={dp.fullName}>{dp.fullName}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
+              <FormControl>
+                <InputLabel id="demo-multiple-checkbox-label">
+                  Assignee
+                </InputLabel>
+                <Select
+                  labelId="demo-multiple-checkbox-label"
+                  value={issueData.assignee}
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.assignee,
+                      payload: e.target.value,
+                    });
+                  }}
+                  label="Assignee *"
+                >
+                  {data.employees?.map((dp) => {
+                    return <MenuItem value={dp.id}>{dp.fullName}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+            </GridContainer>
 
             <HLine />
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Priority</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.priority}
-                label="Priority *"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.priority, payload: e.target.value });
-                }}
-              >
-                {dummyPriority.map((dp) => {
-                  return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Sprint</InputLabel>
-              <Select
-                fullWidth
-                sx={{ width: "280px" }}
-                labelId="status-label"
-                value={issueData.sprint}
-                label="Sprint"
-                onChange={(e) => {
-                  dispatch({ type: ACTION.sprint, payload: e.target.value });
-                }}
-              >
-                {dummySprint.map((dp) => {
-                  return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-                })}
-              </Select>
-            </FormControl>
-          </GridContainer>
-          <Absolute width="100%" bottom="0">
-            <GridContainer
-              justify="space-between"
-              style={{ borderTop: "2px solid #ddd" }}
-              padding="0 0.7rem"
-              columns="auto auto"
-            >
-              <TextButton onClick={() => setAddingTicketModal(false)}>
-                Cancel
-              </TextButton>
-              <Button variant="contained" onClick={handleSubmit}>
-                Create
-              </Button>
+            <GridContainer columns="repeat(auto-fill,minmax(280px,1fr))">
+              <FormControl>
+                <InputLabel id="status-label">Priority</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.priority}
+                  label="Priority *"
+                  onChange={(e) => {
+                    dispatch({
+                      type: ACTION.priority,
+                      payload: e.target.value,
+                    });
+                  }}
+                >
+                  {dummyPriority.map((dp) => {
+                    return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+              <FormControl>
+                <InputLabel id="status-label">Sprint</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="status-label"
+                  value={issueData.sprint}
+                  label="Sprint"
+                  onChange={(e) => {
+                    dispatch({ type: ACTION.sprint, payload: e.target.value });
+                  }}
+                >
+                  {dummySprint.map((dp) => {
+                    return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
             </GridContainer>
-          </Absolute>
+          </GridContainer>
+
+          <GridContainer
+            justify="space-between"
+            style={{ borderTop: "2px solid #ddd" }}
+            padding="0 0.7rem"
+            columns="auto auto"
+          >
+            <TextButton onClick={() => setAddingTicketModal(false)}>
+              Cancel
+            </TextButton>
+            <Button variant="contained" onClick={handleSubmit}>
+              Create
+            </Button>
+          </GridContainer>
         </ReactModal>
         <NavWrapper>
           <GridContainer columns="auto 1fr">

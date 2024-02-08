@@ -51,6 +51,7 @@ import { customStyle } from "../../../utils/modalStyles";
 import { useGetDeveloperQuery } from "../../../api/endpoints/managerEndpoint";
 import NoData from "../../../components/NoData.jsx";
 import AuthContext from "../../../context/AuthProvider.js";
+
 function ActiveSprintScreen() {
   const { id } = useParams();
   const { setAddingTicketModal } = useContext(AuthContext);
@@ -67,6 +68,7 @@ function ActiveSprintScreen() {
     useUpdateProjectTicketStatusMutation();
   const [removeTicket, { isLoading: isRemoveTicketLoading }] =
     useRemoveProjectTicketMutation();
+
   const {
     data: myDevelopers,
     isLoading: isDevelopersLoading,
@@ -254,9 +256,9 @@ function ActiveSprintScreen() {
   };
 
   function openModal(id) {
-    setCurTicket(data.tickets.find((obj) => obj._id == id));
+    setCurTicket(data.tickets.find((obj) => obj.id == id));
     setSelectedId(id);
-    const ct = data.tickets.find((obj) => obj._id == id);
+    const ct = data.tickets.find((obj) => obj.id == id);
 
     dispatch({ type: ACTION.title, payload: ct.title });
     dispatch({ type: ACTION.issueType, payload: ct.issueType });
@@ -283,7 +285,6 @@ function ActiveSprintScreen() {
   const handleCreateTicket = () => {
     setAddingTicketModal(true);
   };
-  console.log(data);
   return (
     <GridContainer
       columns="1fr"
@@ -551,8 +552,8 @@ function ActiveSprintScreen() {
                             .map((item, index) => {
                               return (
                                 <Draggable
-                                  key={item._id}
-                                  draggableId={item._id}
+                                  key={item.id}
+                                  draggableId={item.id}
                                   index={index}
                                 >
                                   {(provided, snapshot) => (
@@ -581,7 +582,7 @@ function ActiveSprintScreen() {
                                         </JobSubTitle>
                                         <DeleteIcon
                                           onClick={() =>
-                                            handleDeleteTicket(item._id)
+                                            handleDeleteTicket(item.id)
                                           }
                                         />
                                       </GridContainer>
@@ -608,7 +609,7 @@ function ActiveSprintScreen() {
                                         </Container>
 
                                         <Button
-                                          onClick={() => openModal(item._id)}
+                                          onClick={() => openModal(item.id)}
                                         >
                                           Update
                                         </Button>
