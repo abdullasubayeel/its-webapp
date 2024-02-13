@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
   BackNavigator,
+  CenterFlexContainer,
   GridContainer,
   Heading2,
   LightText,
   MainContainer,
 } from "../../Global.tsx";
-import { MenuBar } from "./Main.elements";
+import { MenuBar, ProjectLogoImg } from "./Main.elements";
 
 import logo2 from "../../assets/logo2.png";
 
@@ -38,6 +39,9 @@ import { setProjectData } from "../../reduxSlices/projectsSlice";
 import RoadMapDashboard from "./Roadmap/RoadMapDashboard";
 import BacklogDashboard from "./Backlog/BacklogDashboard";
 import Epic from "./Epic/Epic";
+import { Button } from "@mui/material";
+import { BASE_URL } from "../../utils/constants.js";
+import axios from "../../api/axios.js";
 
 function Dashboard() {
   const { id } = useParams();
@@ -82,10 +86,22 @@ function Dashboard() {
     );
   }, [singleProject]);
 
+  async function handleLogout() {
+    axios
+      .post(BASE_URL + "/auth/logout")
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    navigate("/");
+  }
+
   return (
     <GridContainer
       align="flex-start"
-      style={{ background: "#fff" }}
+      style={{ background: "#f5f5f5" }}
       columns="250px 1fr"
     >
       <MenuBar place="flex-start">
@@ -102,8 +118,8 @@ function Dashboard() {
           <LightText>Back to Projects</LightText>
         </BackNavigator>
 
-        <GridContainer columns="1fr 3fr">
-          <img height="40px" src={logo2}></img>
+        <GridContainer style={{ flex: 1 }} columns="1fr 3fr">
+          <ProjectLogoImg src={logo2}></ProjectLogoImg>
           <div>
             <Heading2>{singleProject?.title}</Heading2>
             <LightText>Software Project</LightText>
@@ -111,11 +127,15 @@ function Dashboard() {
         </GridContainer>
 
         <List
-          sx={{ width: "100%", bgcolor: "background.paper" }}
+          sx={{ width: "100%", bgcolor: "#f5f5f5" }}
           component="nav"
           aria-labelledby="nested-list-subheader"
           subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
+            <ListSubheader
+              sx={{ bgcolor: "#f5f5f5" }}
+              component="div"
+              id="nested-list-subheader"
+            >
               Planning Board
             </ListSubheader>
           }
@@ -184,6 +204,28 @@ function Dashboard() {
             <ListItemText primary="Epics" />
           </ListItemButton>
         </List>
+        <CenterFlexContainer
+          style={{
+            position: "absolute",
+            bottom: "1rem",
+            left: "1rem",
+            right: "1rem",
+            boxSizing: "border-box",
+          }}
+        >
+          <Button
+            variant="container"
+            style={{
+              background: "#224368",
+              color: "white",
+              fontWeight: "400",
+              width: "100%",
+            }}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </CenterFlexContainer>
       </MenuBar>
 
       {renderBody()}

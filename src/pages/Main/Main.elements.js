@@ -12,6 +12,12 @@ export const MenuBar = styled(GridContainer)`
   border-right: 2px solid #ddd;
   height: calc(100vh - 65px);
   align-items: flex-start;
+  position: relative;
+`;
+
+export const ProjectLogoImg = styled.img`
+  height: 40px;
+  border-radius: 50%;
 `;
 
 export const KanbanContainer = styled.div`
@@ -19,7 +25,7 @@ export const KanbanContainer = styled.div`
 
   width: 100%;
   overflow: auto;
-  white-space: nowrap;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -31,24 +37,28 @@ export const KanbanContainer = styled.div`
 
 export const KanbanColumn = styled(Container)`
   min-height: 700px;
+  min-width: 384px;
   max-height: 75vh;
   justify-content: flex-start;
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 8px;
-  border-radius: 4px;
-  min-width: 200px;
+  padding: 0 1rem;
+
+  border-right: 2px solid #eee;
 `;
 
 export const KanbanCard = styled.div`
   padding: 1rem;
-  margin: 0 1rem;
+  /* margin: 0 1rem; */
+  width: 350px;
   border: 1px solid #ccc;
+  border-radius: 10px;
   background-color: #fff;
   grid-template-columns: 1fr 40px;
   grid-template-rows: 2fr 1fr;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  margin-top: 8px;
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.12);
 `;
 
 export const JobStatusText = styled.p`
@@ -68,9 +78,9 @@ export const JobTitleText = styled.p`
 export const JobSubTitle = styled.p`
   margin: 0;
   font-weight: 900;
-  font-size: 14px;
+  font-size: 16px;
   width: 100%;
-  color: #666666;
+  color: #222;
 `;
 
 export const JobSmallText = styled.p`
@@ -85,7 +95,7 @@ export const TileHeading = styled.p`
   margin: 0.2rem 0;
   font-weight: ${(props) => (props.active ? "400" : "700")};
   font-size: ${(props) => (props.active ? "16px" : "14px")};
-
+  text-overflow: ellipsis;
   color: ${(props) => (props.active ? props.theme.colors.atsBlue : "#6c6c6c")};
   &:hover {
     cursor: pointer;

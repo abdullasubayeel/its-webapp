@@ -15,9 +15,8 @@ export const Container = styled(CenterFlexContainer)`
 `;
 
 export const MainContainer = styled.div`
-  margin: 1rem auto;
-  max-width: 1240px;
-  padding: 0 1rem;
+  /* max-width: 1240px; */
+  padding: 2rem;
 `;
 
 export const GridContainer = styled.div`
@@ -63,9 +62,9 @@ export const CardContainer = styled(CenterFlexContainer)`
   padding: 1.3rem;
   justify-content: flex-start;
   align-items: flex-start;
-  background-color: #fff;
+  background-color: #f5f5f5;
   border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   & > div {
     width: 100%;
   }

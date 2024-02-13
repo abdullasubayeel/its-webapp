@@ -12,5 +12,5 @@ export const AuthNav = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  max-width: 1240px;
+  /* max-width: 1240px; */
 `;

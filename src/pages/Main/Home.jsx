@@ -361,7 +361,8 @@ const Home = memo(() => {
         </GridContainer>
       </ReactModal>
       <GridContainer
-        columns="repeat(auto-fill,minmax(500px,1fr))"
+        gap="2rem"
+        columns="1fr 1fr"
         align="stretch"
         justify="stretch"
       >

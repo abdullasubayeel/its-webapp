@@ -373,7 +373,7 @@ function Navbar() {
             <li>
               <Link>Dashboards</Link>
             </li>
-            {location.pathname.split("/").includes("project") && (
+            {/* {location.pathname.split("/").includes("project") && (
               <Button
                 style={{ background: "#6B7EBF" }}
                 onClick={openModal}
@@ -381,20 +381,42 @@ function Navbar() {
               >
                 Create
               </Button>
-            )}
+            )} */}
           </NavLinks>
           {/* <TextField label="Search" margin="dense"></TextField> */}
-          <CenterFlexContainer>
+          {/* <CenterFlexContainer>
             <SearchField />
-          </CenterFlexContainer>
+          </CenterFlexContainer> */}
 
-          <Button
-            variant="container"
-            style={{ background: "#224368", color: "white", fontWeight: "400" }}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+          {location.pathname.split("/").includes("project") ? (
+            <Button
+              variant="container"
+              style={{
+                background: "#224368",
+                color: "white",
+                fontWeight: "400",
+                width: "fit-content",
+                marginLeft: "auto",
+              }}
+              onClick={openModal}
+            >
+              + Create Ticket
+            </Button>
+          ) : (
+            <Button
+              variant="container"
+              style={{
+                background: "#224368",
+                color: "white",
+                fontWeight: "400",
+                width: "fit-content",
+                marginLeft: "auto",
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          )}
         </NavWrapper>
       </NavContainer>
       <Outlet />

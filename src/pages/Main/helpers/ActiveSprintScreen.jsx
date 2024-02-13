@@ -26,7 +26,12 @@ import {
   SkillTile,
 } from "../Main.elements";
 
-import { Close } from "@mui/icons-material";
+import {
+  ArrowRight,
+  ArrowRightTwoTone,
+  Close,
+  KeyboardDoubleArrowRight,
+} from "@mui/icons-material";
 import { DeleteIcon } from "../Main.elements";
 import {
   FormControl,
@@ -159,7 +164,7 @@ function ActiveSprintScreen() {
   };
 
   const [columns, setColumns] = useState(columnsFromBackend);
-
+  console.log("columns", columns);
   const dummyIssues = [
     { id: 1, type: "Task" },
     { id: 2, type: "Story" },
@@ -298,9 +303,9 @@ function ActiveSprintScreen() {
       place="flex-start"
       margin="1rem 0"
     >
-      <GridContainer width="100%" columns="auto 1fr 1fr">
+      <GridContainer width="100%" columns="auto 1fr 1fr" padding="0 2rem 0 0">
         <TextField
-          sx={{ width: "100px" }}
+          sx={{ width: "300px" }}
           value={devFilter}
           onChange={setDevFilter}
           label="Search"
@@ -319,23 +324,25 @@ function ActiveSprintScreen() {
             ></ProfileToggle>
           ))}
         </GridContainer>
-        <FormControl fullWidth>
-          <InputLabel id="epic-label">Epic</InputLabel>
-          <Select
-            fullWidth
-            sx={{ width: "280px" }}
-            labelId="epic-label"
-            value={issueData.issueType}
-            label="Epic"
-            onChange={(e) => {
-              setSelectedEpic(e.target.value);
-            }}
-          >
-            {dummyIssues.map((dp) => {
-              return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
-            })}
-          </Select>
-        </FormControl>
+        <GridContainer justify="flex-end">
+          <FormControl fullWidth>
+            <InputLabel id="epic-label">Epic</InputLabel>
+            <Select
+              fullWidth
+              sx={{ width: "280px" }}
+              labelId="epic-label"
+              value={issueData.issueType}
+              label="Epic"
+              onChange={(e) => {
+                setSelectedEpic(e.target.value);
+              }}
+            >
+              {dummyIssues.map((dp) => {
+                return <MenuItem value={dp.type}>{dp.type}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+        </GridContainer>
       </GridContainer>
 
       <KanbanContainer>
@@ -542,16 +549,19 @@ function ActiveSprintScreen() {
                   {(provided, snapshot) => {
                     return (
                       <Container>
-                        <Heading2>{column.name}</Heading2>
+                        <Heading2 style={{ margin: "8px 2rem" }}>
+                          {column.name} ({column?.items?.length})
+                        </Heading2>
                         <KanbanColumn
                           {...provided.droppableProps}
                           ref={provided.innerRef}
-                          style={{
-                            background: snapshot.isDraggingOver
-                              ? "#EBFFC8 "
-                              : "#EFF2E9",
-                            marginRight: "1rem",
-                          }}
+                          style={
+                            {
+                              // background: snapshot.isDraggingOver
+                              //   ? "#EBFFC8 "
+                              //   : "#EFF2E9",
+                            }
+                          }
                         >
                           {column?.items
                             ?.filter((obj) => {
@@ -575,56 +585,38 @@ function ActiveSprintScreen() {
                                       ref={provided.innerRef}
                                       style={{
                                         userSelect: "none",
-                                        display: "grid",
-                                        width: "calc(100% - 16px - 2rem)",
-                                        gridTemplateColumns: "1fr",
-                                        margin: "8px",
+
                                         backgroundColor: snapshot.isDragging
                                           ? "#CBCBCB "
                                           : "#fff",
                                         ...provided.draggableProps.style,
                                       }}
+                                      onClick={() => openModal(item.id)}
                                     >
-                                      <GridContainer
-                                        columns="1fr auto"
-                                        width="100%"
+                                      <JobSubTitle
+                                        style={{ margin: "0 0 8px 0" }}
                                       >
-                                        <JobSubTitle style={{ margin: "0" }}>
-                                          {item.title}
-                                        </JobSubTitle>
-                                        <DeleteIcon
-                                          onClick={() =>
-                                            handleDeleteTicket(item.id)
-                                          }
-                                        />
-                                      </GridContainer>
-                                      <TileHeading>
-                                        {item.description}
-                                      </TileHeading>
-                                      <JobSmallText>
+                                        {item.title}
+                                      </JobSubTitle>
+
+                                      <LightText>{item.description}</LightText>
+                                      <JobSmallText style={{ margin: "4px 0" }}>
                                         Priority:&nbsp;{item.priority}
                                       </JobSmallText>
 
-                                      <GridContainer
-                                        justify="flex-start"
-                                        gap="0"
-                                        columns="auto auto"
-                                      >
-                                        <LightText>Reporter:&nbsp;</LightText>
-                                        <LightText>{item.reporter}</LightText>
-                                      </GridContainer>
                                       <HLine />
                                       <CenterFlexContainer justify="space-between">
                                         <Container align="flex-start">
-                                          <LightText>Assignee:&nbsp;</LightText>
-                                          <LightText>{item.assignee}</LightText>
+                                          <LightText>
+                                            {item.assigneeDeveloper}
+                                          </LightText>
                                         </Container>
-
-                                        <Button
-                                          onClick={() => openModal(item.id)}
-                                        >
-                                          Update
-                                        </Button>
+                                        <KeyboardDoubleArrowRight color="disabled" />
+                                        <Container>
+                                          <LightText>
+                                            {item.reportingDeveloper}
+                                          </LightText>
+                                        </Container>
                                       </CenterFlexContainer>
                                     </KanbanCard>
                                   )}
